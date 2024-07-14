@@ -1,59 +1,101 @@
 #!/usr/bin/env python3
 import io
 import sqlite3
+from argparse import ArgumentParser
+from pathlib import Path
+
 from PIL import Image
-import argparse
-import os
+from tqdm import tqdm
 
-parser = argparse.ArgumentParser(description='Converts mbtiles format to sqlitedb format suitable for OsmAnd')
-
-parser.add_argument('input', help='input file')
-parser.add_argument('output', help='output file')
-parser.add_argument('-f', '-force', action='store_true', help='override output file if exists')
-parser.add_argument('--jpg', dest='jpeg_quality', action='store', help='convert tiles to JPEG with specified quality')
-args = parser.parse_args()
-
-if os.path.isfile(args.output):
-    if args.f:
-        os.remove(args.output)
-    else:
-        print("Output file already exists. Add -f option for overwrite")
-        exit(1)
+from utils import _remove_file
 
 
-# See:
-# * https://github.com/osmandapp/Osmand/blob/master/OsmAnd/src/net/osmand/plus/SQLiteTileSource.java
+def convert_mbtiles_to_sqlitedb(
+    mbtiles_path: Path,
+    sqlitedb_path: Path,
+    replace_file: bool = False,
+    jpeg_quality: int | None = None,
+) -> None:
+    _remove_file(
+        sqlitedb_path, "Output file %s  already exists. Add -f option for overwrite", replace_file
+    )
+
+    source = sqlite3.connect(mbtiles_path)
+    destination = sqlite3.connect(sqlitedb_path)
+
+    source_cursor = source.cursor()
+    destination_cursor = destination.cursor()
+
+    destination_cursor.execute(
+        "CREATE TABLE tiles (x INT, y INT, z INT, s INT, image BLOB, PRIMARY KEY (x, y, z, s))"
+    )
+    destination_cursor.execute("CREATE TABLE info (maxzoom INT, minzoom INT)")
+
+    input_data = source_cursor.execute(
+        "SELECT zoom_level, tile_column, tile_row, tile_data FROM tiles"
+    )
+
+    for row in tqdm(iterable=input_data, desc=mbtiles_path.stem):
+        image = row[3]
+        if jpeg_quality is not None:
+            image = to_jpg(image, int(jpeg_quality))
+        zoom, x_tile, y_tile = map(int, row[:3])
+        y = (1 << zoom) - 1 - y_tile  # 2 ** zoom - 1 - y_tile
+        z = 17 - zoom
+        destination_cursor.execute(
+            "INSERT INTO tiles (x, y, z, s, image) VALUES (?, ?, ?, ?, ?)",
+            (x_tile, y, z, 0, sqlite3.Binary(image)),
+        )
+
+    destination_cursor.execute(
+        "INSERT INTO info (maxzoom, minzoom) SELECT MAX(z), MIN(z) FROM tiles"
+    )
+
+    destination.commit()
+    source.close()
+    destination.close()
 
 
-def to_jpg(raw_bytes, quality):
+def to_jpg(raw_bytes: bytes, quality: int) -> bytes:
     im = Image.open(io.BytesIO(raw_bytes))
-    im = im.convert('RGB')
+    im = im.convert("RGB")
     stream = io.BytesIO()
-    im.save(stream, format = "JPEG", subsampling=0, quality=quality)
+    im.save(stream, format="JPEG", subsampling=0, quality=quality)
     return stream.getvalue()
 
-source = sqlite3.connect(args.input)
-dest = sqlite3.connect(args.output)
+
+def _setup_parser() -> ArgumentParser:
+    parser = ArgumentParser(
+        description="Converts mbtiles format to sqlitedb format suitable for OsmAnd"
+    )
+    parser.add_argument("input", help="input file path")
+    parser.add_argument("output", help="output file path")
+    parser.add_argument(
+        "-f",
+        "--force",
+        action="store_true",
+        dest="force",
+        default=False,
+        help="override output file if exists",
+    )
+    parser.add_argument(
+        "--jpg",
+        dest="jpeg_quality",
+        action="store",
+        type=int,
+        help="convert tiles to JPEG with specified quality",
+    )
+    return parser
 
 
-scur = source.cursor()
-dcur = dest.cursor()
+if __name__ == "__main__":
+    parser = _setup_parser()
 
-dcur.execute('''CREATE TABLE tiles (x int, y int, z int, s int, image blob, PRIMARY KEY (x,y,z,s));''')
-dcur.execute('''CREATE TABLE info (maxzoom Int, minzoom Int);''')
+    args = parser.parse_args()
 
-for row in scur.execute("SELECT zoom_level, tile_column, tile_row, tile_data FROM tiles"):
-    image = row[3]
-    if(args.jpeg_quality != None):
-        image = to_jpg(image, int(args.jpeg_quality))
-    z, x, y, s = int(row[0]), int(row[1]), int(row[2]), 0
-    y = 2 ** z - 1 - y
-    z = 17 - z
-    dcur.execute("INSERT INTO tiles (x, y, z, s, image) VALUES (?, ?, ?, ?, ?)", [x, y, z, s, sqlite3.Binary(image)])
-
-dcur.execute("INSERT INTO info (maxzoom, minzoom) SELECT max(z),min(z) from tiles")
-
-dest.commit()
-source.close()
-dest.close()
-
+    convert_mbtiles_to_sqlitedb(
+        Path(args.input),
+        Path(args.output),
+        args.force,
+        args.jpeg_quality,
+    )
