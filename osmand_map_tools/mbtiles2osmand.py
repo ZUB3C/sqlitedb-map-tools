@@ -77,8 +77,8 @@ def convert_mbtiles_to_sqlitedb(
 
 
 def to_jpg(raw_bytes: bytes, quality: int) -> bytes:
-    image = Image.open(io.BytesIO(raw_bytes))
-    image = image.convert("RGB")
+    image_file = Image.open(io.BytesIO(raw_bytes))
+    image = image_file.convert("RGB")
     stream = io.BytesIO()
     image.save(stream, format="JPEG", subsampling=0, quality=quality)
     return stream.getvalue()
