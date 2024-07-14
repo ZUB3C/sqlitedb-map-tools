@@ -3,7 +3,7 @@ import sqlite3
 from argparse import ArgumentParser
 from pathlib import Path
 
-from utils import _remove_file
+from .utils import _remove_file
 
 
 def setup_parser() -> ArgumentParser:
@@ -27,12 +27,9 @@ def setup_parser() -> ArgumentParser:
     return parser
 
 
-def merge_osmand_maps(
-    input_map_paths: list[Path],
-    output_file_path: Path,
-) -> None:
+def merge_osmand_maps(input_map_paths: list[Path], output_file_path: Path, force: bool) -> None:
     _remove_file(
-        output_file_path, "Output file %s  already exists. Add -f option for overwrite", args.force
+        output_file_path, "Output file %s  already exists. Add -f option for overwrite", force
     )
 
     destination = sqlite3.connect(output_file_path)
@@ -64,7 +61,11 @@ def merge_osmand_maps(
     destination.close()
 
 
-if __name__ == "__main__":
+def main():
     parser = setup_parser()
     args = parser.parse_args()
-    merge_osmand_maps(args.input, args.output)
+    merge_osmand_maps(input_map_paths=args.input, output_file_path=args.output, force=args.force)
+
+
+if __name__ == "__main__":
+    main()

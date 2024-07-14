@@ -5,7 +5,7 @@ import time
 from argparse import ArgumentParser
 from pathlib import Path
 
-from utils import _remove_file
+from .utils import _remove_file
 
 
 def setup_parser() -> ArgumentParser:
@@ -38,13 +38,6 @@ def setup_parser() -> ArgumentParser:
         help="Coordinates of the bottom right corner of the piece of map"
         "that needs to be cut into a separate map.",
     )
-    parser.add_argument(
-        "--jpg",
-        dest="jpeg_quality",
-        action="store",
-        type=int,
-        help="convert tiles to JPEG with specified quality",
-    )
     return parser
 
 
@@ -70,14 +63,17 @@ def coordinates_to_tile_position(
 def cut_piece_of_map(
     input_map_path: Path,
     output_file_path: Path,
+    upper_left_coordinates: tuple[float, float],
+    bottom_right_coordinates: tuple[float, float],
+    force: bool,
 ) -> None:
-    latitude1, longitude1 = args.upper_left
-    latitude2, longitude2 = args.bottom_right
+    latitude1, longitude1 = upper_left_coordinates
+    latitude2, longitude2 = bottom_right_coordinates
     if not (latitude1 > latitude2 and longitude1 < longitude2):
         print("Enter the coordinates of the upper left and bottom right corners correctly")
         exit(1)
     _remove_file(
-        output_file_path, "Output file %s  already exists. Add -f option for overwrite", args.force
+        output_file_path, "Output file %s  already exists. Add -f option for overwrite", force
     )
 
     source = sqlite3.connect(input_map_path)
@@ -125,7 +121,17 @@ def cut_piece_of_map(
     print(f"Total tiles count: {total_tiles_count}")
 
 
-if __name__ == "__main__":
+def main():
     parser = setup_parser()
     args = parser.parse_args()
-    cut_piece_of_map(args.input, args.outpu)
+    cut_piece_of_map(
+        input_map_path=args.input,
+        output_file_path=args.output,
+        upper_left_coordinates=args.upper_left,
+        bottom_right_coordinates=args.bottom_right,
+        force=args.force,
+    )
+
+
+if __name__ == "__main__":
+    main()

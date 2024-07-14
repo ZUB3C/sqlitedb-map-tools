@@ -2,10 +2,10 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 import requests
+from const import MAP_NAMES, TILES_URL
 from tqdm import tqdm
 
-from const import MAP_NAMES, TILES_URL
-from utils import _remove_file
+from .utils import _remove_file
 
 
 def download_file(url: str, file_path: Path) -> None:

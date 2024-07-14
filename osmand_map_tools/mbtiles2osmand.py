@@ -7,7 +7,7 @@ from pathlib import Path
 from PIL import Image
 from tqdm import tqdm
 
-from utils import _remove_file
+from .utils import _remove_file
 
 
 def convert_mbtiles_to_sqlitedb(
@@ -88,7 +88,7 @@ def _setup_parser() -> ArgumentParser:
     return parser
 
 
-if __name__ == "__main__":
+def main():
     parser = _setup_parser()
 
     args = parser.parse_args()
@@ -99,3 +99,7 @@ if __name__ == "__main__":
         args.force,
         args.jpeg_quality,
     )
+
+
+if __name__ == "__main__":
+    main()
