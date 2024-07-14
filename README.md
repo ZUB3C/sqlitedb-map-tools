@@ -120,3 +120,23 @@ options:
 ```sh
 download-nakarte-me-maps mbtiles -m topo500 topo1000
 ```
+
+Available maps:
+
+    ArbaletMO
+    adraces
+    eurasia25km
+    ggc250
+    ggc500
+    ggc1000
+    ggc2000
+    montenegro250m
+    new_gsh_050k
+    new_gsh_100k
+    osport
+    purikov
+    topo001m
+    topo250
+    topo500
+    topo1000
+    wikimedia_commons_images
