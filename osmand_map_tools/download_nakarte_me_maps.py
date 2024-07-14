@@ -49,7 +49,7 @@ def setup_parser() -> ArgumentParser:
         action="store",
         help="convert tiles to JPEG with specified quality",
     )
-    parser.add_argument("-m", "--maps", nargs="+", type=str, help="list of map names to download")
+    parser.add_argument("-m", "--maps", nargs="+", help="list of map names to download")
     return parser
 
 

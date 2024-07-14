@@ -15,7 +15,7 @@ def setup_parser() -> ArgumentParser:
         help="input files. If multiple files contain tile with the same coordinates, "
         "tile from first (from argument list) file will be used",
     )
-    parser.add_argument("output", type=str, help="output file directory")
+    parser.add_argument("output", type=Path, help="output file directory")
     parser.add_argument(
         "-f",
         "--force",

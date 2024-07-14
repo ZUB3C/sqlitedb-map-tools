@@ -57,10 +57,10 @@ def convert_mbtiles_to_sqlitedb(
 
 
 def to_jpg(raw_bytes: bytes, quality: int) -> bytes:
-    im = Image.open(io.BytesIO(raw_bytes))
-    im = im.convert("RGB")
+    image = Image.open(io.BytesIO(raw_bytes))
+    image = image.convert("RGB")
     stream = io.BytesIO()
-    im.save(stream, format="JPEG", subsampling=0, quality=quality)
+    image.save(stream, format="JPEG", subsampling=0, quality=quality)
     return stream.getvalue()
 
 
@@ -68,8 +68,8 @@ def _setup_parser() -> ArgumentParser:
     parser = ArgumentParser(
         description="Converts mbtiles format to sqlitedb format suitable for OsmAnd"
     )
-    parser.add_argument("input", help="input file path")
-    parser.add_argument("output", help="output file path")
+    parser.add_argument("input", type=Path, help="input file path")
+    parser.add_argument("output", type=Path, help="output file path")
     parser.add_argument(
         "-f",
         "--force",
@@ -94,10 +94,10 @@ def main():
     args = parser.parse_args()
 
     convert_mbtiles_to_sqlitedb(
-        Path(args.input),
-        Path(args.output),
-        args.force,
-        args.jpeg_quality,
+        mbtiles_path=args.input,
+        sqlitedb_path=args.output,
+        replace_file=args.force,
+        jpeg_quality=args.jpeg_quality,
     )
 
 

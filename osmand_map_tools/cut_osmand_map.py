@@ -12,8 +12,8 @@ def setup_parser() -> ArgumentParser:
     parser = ArgumentParser(
         description="Cut rectangular piece of map from sqlitedb file into separate map"
     )
-    parser.add_argument("input", help="input file directory")
-    parser.add_argument("output", help="output file directory")
+    parser.add_argument("input", type=Path, help="input file directory")
+    parser.add_argument("output", type=Path, help="output file directory")
     parser.add_argument(
         "-f",
         "--force",
