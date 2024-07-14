@@ -1,15 +1,34 @@
-#!/usr/bin/env python3
 import io
 import sqlite3
-from argparse import ArgumentParser
 from pathlib import Path
 
+import click
 from PIL import Image
 from tqdm import tqdm
 
 from .utils import _remove_file
 
 
+@click.command(help="Converts mbtiles format to sqlitedb format suitable for OsmAnd")
+@click.argument(
+    "mbtiles_path",
+    metavar="INPUT_FILE",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+)
+@click.argument(
+    "sqlitedb_path", metavar="OUTPUT_FILE", type=click.Path(dir_okay=False, path_type=Path)
+)
+@click.option(
+    "-f",
+    "--force",
+    "replace_file",
+    is_flag=True,
+    default=False,
+    help="Override output file if it exists",
+)
+@click.option(
+    "-j", "--jpeg-quality", type=int, help="Convert tiles to JPEG with specified quality"
+)
 def convert_mbtiles_to_sqlitedb(
     mbtiles_path: Path,
     sqlitedb_path: Path,
@@ -17,7 +36,7 @@ def convert_mbtiles_to_sqlitedb(
     jpeg_quality: int | None = None,
 ) -> None:
     _remove_file(
-        sqlitedb_path, "Output file %s  already exists. Add -f option for overwrite", replace_file
+        sqlitedb_path, "Output file %s already exists. Add -f option for overwrite", replace_file
     )
 
     source = sqlite3.connect(mbtiles_path)
@@ -64,42 +83,5 @@ def to_jpg(raw_bytes: bytes, quality: int) -> bytes:
     return stream.getvalue()
 
 
-def _setup_parser() -> ArgumentParser:
-    parser = ArgumentParser(
-        description="Converts mbtiles format to sqlitedb format suitable for OsmAnd"
-    )
-    parser.add_argument("input", type=Path, help="input file path")
-    parser.add_argument("output", type=Path, help="output file path")
-    parser.add_argument(
-        "-f",
-        "--force",
-        action="store_true",
-        dest="force",
-        default=False,
-        help="override output file if exists",
-    )
-    parser.add_argument(
-        "--jpg",
-        dest="jpeg_quality",
-        action="store",
-        type=int,
-        help="convert tiles to JPEG with specified quality",
-    )
-    return parser
-
-
-def main():
-    parser = _setup_parser()
-
-    args = parser.parse_args()
-
-    convert_mbtiles_to_sqlitedb(
-        mbtiles_path=args.input,
-        sqlitedb_path=args.output,
-        replace_file=args.force,
-        jpeg_quality=args.jpeg_quality,
-    )
-
-
 if __name__ == "__main__":
-    main()
+    convert_mbtiles_to_sqlitedb()

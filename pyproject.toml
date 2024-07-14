@@ -15,16 +15,17 @@ python = "^3.11"
 pillow = "^10.4.0"
 tqdm = "^4.66.4"
 requests = "^2.32.3"
+click = "^8.1.7"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.4.3"
 mypy = "^1.8.0"
 
 [tool.poetry.scripts]
-mbtiles2osmand = "osmand_map_tools.mbtiles2osmand:main"
-cut-osmand-map = "osmand_map_tools.cut_osmand_map:main"
-merge-osmand = "osmand_map_tools.merge_osmand:main"
-download-nakarte-me-maps = "osmand_map_tools.download_nakarte_me_maps:main"
+mbtiles2osmand = "osmand_map_tools.mbtiles2osmand:convert_mbtiles_to_sqlitedb"
+cut-osmand-map = "osmand_map_tools.cut_osmand_map:cut_piece_of_map"
+merge-osmand = "osmand_map_tools.merge_osmand:merge_osmand_maps"
+download-nakarteme-maps = "osmand_map_tools.download_nakarteme_maps:download_nakarteme_maps"
 
 [tool.ruff]
 target-version = "py311"

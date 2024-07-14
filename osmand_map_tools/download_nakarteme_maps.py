@@ -1,6 +1,6 @@
-from argparse import ArgumentParser
 from pathlib import Path
 
+import click
 import requests
 from tqdm import tqdm
 
@@ -30,37 +30,29 @@ def download_file(url: str, file_path: Path, force: bool) -> None:
             bar.update(size)
 
 
-def setup_parser() -> ArgumentParser:
-    parser = ArgumentParser(
-        description="Download mbtiles files from https://tiles.nakarte.me/files"
-    )
-    parser.add_argument("maps_dir", type=Path, help="directory where maps will be downloaded")
-    parser.add_argument(
-        "-f",
-        "--force",
-        action="store_true",
-        dest="force",
-        default=False,
-        help="override output files if exists",
-    )
-    parser.add_argument(
-        "--jpg",
-        dest="jpeg_quality",
-        action="store",
-        help="convert tiles to JPEG with specified quality",
-    )
-    parser.add_argument("-m", "--maps", nargs="+", help="list of map names to download")
-    return parser
-
-
-def main():
-    parser = setup_parser()
-    args = parser.parse_args()
-
-    available_maps_str = f"Available maps:\n    {'\n    '.join(MAP_NAMES)}"
-    map_names_to_download = args.maps
+@click.command(
+    help="Download .mbtiles map files from https://tiles.nakarte.me/files.\n\n"
+    "Pass 'all' as map name to download all available maps."
+)
+@click.argument("maps", nargs=-1)
+@click.option(
+    "-o",
+    "--output",
+    "output_dir",
+    default=".",
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="Directory where maps will be downloaded",
+)
+@click.option(
+    "-f", "--force", is_flag=True, default=False, help="Override output file if it exist"
+)
+def download_nakarteme_maps(
+    maps: list[str], output_dir: Path = Path(), force: bool = False
+) -> None:
+    available_maps_str = "".join(("Available maps:\n    ", "\n    ".join(MAP_NAMES)))
+    map_names_to_download = maps
     if not map_names_to_download:
-        print(f"Use -m argument to specify maps which you want to download.\n{available_maps_str}")
+        print(f"Specify maps which you want to download as arguments.\n{available_maps_str}")
         exit(1)
     if map_names_to_download == ["all"]:
         print("Downloading all available maps.")
@@ -84,8 +76,8 @@ def main():
     print(f"Total size to download: {sum(map_file_sizes.values()) / (1024 ** 3):.2f} GB")
 
     for url, map_name in zip(map_urls, map_names_to_download, strict=True):
-        download_file(url=url, file_path=args.maps_dir / f"{map_name}.mbtiles", force=args.force)
+        download_file(url=url, file_path=output_dir / f"{map_name}.mbtiles", force=force)
 
 
 if __name__ == "__main__":
-    main()
+    download_nakarteme_maps()

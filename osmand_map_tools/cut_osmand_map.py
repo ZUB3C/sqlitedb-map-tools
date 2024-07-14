@@ -1,44 +1,11 @@
-#!/usr/bin/env python3
 import math
 import sqlite3
 import time
-from argparse import ArgumentParser
 from pathlib import Path
 
+import click
+
 from .utils import _remove_file
-
-
-def setup_parser() -> ArgumentParser:
-    parser = ArgumentParser(
-        description="Cut rectangular piece of map from sqlitedb file into separate map"
-    )
-    parser.add_argument("input", type=Path, help="input file directory")
-    parser.add_argument("output", type=Path, help="output file directory")
-    parser.add_argument(
-        "-f",
-        "--force",
-        dest="force",
-        action="store_true",
-        default=False,
-        help="override output files if exists",
-    )
-    parser.add_argument(
-        "-l",
-        "--upper-left",
-        nargs=2,
-        type=float,
-        help="Coordinates of the upper left corner of the piece of map"
-        "that needs to be cut into a separate map.",
-    )
-    parser.add_argument(
-        "-r",
-        "--bottom-right",
-        nargs=2,
-        type=float,
-        help="Coordinates of the bottom right corner of the piece of map"
-        "that needs to be cut into a separate map.",
-    )
-    return parser
 
 
 def tile_position_to_coordinates(x_tile: int, y_tile: int, zoom: int) -> tuple[float, float]:
@@ -60,24 +27,61 @@ def coordinates_to_tile_position(
     return x_tile, y_tile
 
 
+@click.command(help="Cut rectangular piece of map from sqlitedb file into separate map")
+@click.argument(
+    "input_file",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+)
+@click.argument("output_file", type=click.Path(dir_okay=False, path_type=Path))
+@click.option(
+    "-l",
+    "--upper-left",
+    "upper_left_coordinates",
+    required=True,
+    nargs=2,
+    type=float,
+    help="Coordinates of the upper left corner of the piece of map"
+    "that needs to be cut into a separate map.",
+)
+@click.option(
+    "-r",
+    "--bottom-right",
+    "bottom_right_coordinates",
+    required=True,
+    nargs=2,
+    type=float,
+    help="Coordinates of the bottom right corner of the piece of map"
+    "that needs to be cut into a separate map.",
+)
+@click.option(
+    "-f",
+    "--force",
+    "replace_file",
+    is_flag=True,
+    default=False,
+    help="Override output file if it exists",
+)
 def cut_piece_of_map(
-    input_map_path: Path,
-    output_file_path: Path,
+    input_file: Path,
+    output_file: Path,
     upper_left_coordinates: tuple[float, float],
     bottom_right_coordinates: tuple[float, float],
-    force: bool,
+    replace_file: bool,
 ) -> None:
+    print(
+        f"{input_file=}\n{output_file=}\n{upper_left_coordinates=}\n{bottom_right_coordinates=}\n{replace_file=}"
+    )
     latitude1, longitude1 = upper_left_coordinates
     latitude2, longitude2 = bottom_right_coordinates
     if not (latitude1 > latitude2 and longitude1 < longitude2):
         print("Enter the coordinates of the upper left and bottom right corners correctly")
         exit(1)
     _remove_file(
-        output_file_path, "Output file %s  already exists. Add -f option for overwrite", force
+        output_file, "Output file %s already exists. Add -f option for overwrite", replace_file
     )
 
-    source = sqlite3.connect(input_map_path)
-    destination = sqlite3.connect(output_file_path)
+    source = sqlite3.connect(input_file)
+    destination = sqlite3.connect(output_file)
 
     source_cursor = source.cursor()
     destination_cursor = destination.cursor()
@@ -121,17 +125,5 @@ def cut_piece_of_map(
     print(f"Total tiles count: {total_tiles_count}")
 
 
-def main():
-    parser = setup_parser()
-    args = parser.parse_args()
-    cut_piece_of_map(
-        input_map_path=args.input,
-        output_file_path=args.output,
-        upper_left_coordinates=args.upper_left,
-        bottom_right_coordinates=args.bottom_right,
-        force=args.force,
-    )
-
-
 if __name__ == "__main__":
-    main()
+    cut_piece_of_map()

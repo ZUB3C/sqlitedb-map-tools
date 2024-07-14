@@ -1,38 +1,30 @@
-#!/usr/bin/env python3
 import sqlite3
-from argparse import ArgumentParser
 from pathlib import Path
+
+import click
 
 from .utils import _remove_file
 
 
-def setup_parser() -> ArgumentParser:
-    parser = ArgumentParser(description="Merge multiple OsmAnd (.sqlitedb) files into single")
-    parser.add_argument(
-        "input",
-        nargs="+",
-        type=Path,
-        help="input files. If multiple files contain tile with the same coordinates, "
-        "tile from first (from argument list) file will be used",
-    )
-    parser.add_argument("output", type=Path, help="output file directory")
-    parser.add_argument(
-        "-f",
-        "--force",
-        dest="force",
-        action="store_true",
-        default=False,
-        help="override output files if exists",
-    )
-    return parser
+@click.command(
+    help="Merge multiple OsmAnd (.sqlitedb) files into a single file.\n\n"
+    "If multiple files contain tile with the same coordinates, "
+    "tile from first (from argument list) file will be used."
+)
+@click.argument(
+    "input_map_paths",
+    metavar="INPUT_FILES",
+    nargs=-1,
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+)
+@click.argument("output_file", type=click.Path(dir_okay=False, path_type=Path))
+@click.option(
+    "-f", "--force", is_flag=True, default=False, help="Override output file if it exist"
+)
+def merge_osmand_maps(input_map_paths: list[Path], output_file: Path, force: bool = False) -> None:
+    _remove_file(output_file, "Output file %s already exists. Add -f option for overwrite", force)
 
-
-def merge_osmand_maps(input_map_paths: list[Path], output_file_path: Path, force: bool) -> None:
-    _remove_file(
-        output_file_path, "Output file %s  already exists. Add -f option for overwrite", force
-    )
-
-    destination = sqlite3.connect(output_file_path)
+    destination = sqlite3.connect(output_file)
     destination_cursor = destination.cursor()
 
     destination_cursor.execute(
@@ -61,11 +53,5 @@ def merge_osmand_maps(input_map_paths: list[Path], output_file_path: Path, force
     destination.close()
 
 
-def main():
-    parser = setup_parser()
-    args = parser.parse_args()
-    merge_osmand_maps(input_map_paths=args.input, output_file_path=args.output, force=args.force)
-
-
 if __name__ == "__main__":
-    main()
+    merge_osmand_maps()
