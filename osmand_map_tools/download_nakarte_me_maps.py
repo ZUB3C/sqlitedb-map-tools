@@ -2,15 +2,15 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 import requests
-from const import MAP_NAMES, TILES_URL
 from tqdm import tqdm
 
+from .const import MAP_NAMES, TILES_URL
 from .utils import _remove_file
 
 
-def download_file(url: str, file_path: Path) -> None:
+def download_file(url: str, file_path: Path, force: bool) -> None:
     file_path.parent.mkdir(parents=True, exist_ok=True)
-    _remove_file(file_path, "File %s already exists, skipping download", args.force)
+    _remove_file(file_path, "File %s already exists, skipping download", force)
 
     response = requests.get(url, stream=True, timeout=60)
     total_file_size = int(response.headers.get("content-length", 0))
@@ -32,7 +32,7 @@ def download_file(url: str, file_path: Path) -> None:
 
 def setup_parser() -> ArgumentParser:
     parser = ArgumentParser(
-        description="Converts mbtiles format to sqlitedb format suitable for OsmAnd"
+        description="Download mbtiles files from https://tiles.nakarte.me/files"
     )
     parser.add_argument("maps_dir", type=Path, help="directory where maps will be downloaded")
     parser.add_argument(
@@ -53,7 +53,7 @@ def setup_parser() -> ArgumentParser:
     return parser
 
 
-if __name__ == "__main__":
+def main():
     parser = setup_parser()
     args = parser.parse_args()
 
@@ -84,4 +84,8 @@ if __name__ == "__main__":
     print(f"Total size to download: {sum(map_file_sizes.values()) / (1024 ** 3):.2f} GB")
 
     for url, map_name in zip(map_urls, map_names_to_download, strict=True):
-        download_file(url=url, file_path=args.maps_dir / f"{map_name}.mbtiles")
+        download_file(url=url, file_path=args.maps_dir / f"{map_name}.mbtiles", force=args.force)
+
+
+if __name__ == "__main__":
+    main()

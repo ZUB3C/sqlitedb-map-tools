@@ -15,7 +15,7 @@ pipx install git+https://github.com/ZUB3C/osmand-map-tools.git
 mbtiles2osmand [-h] [-f] [--jpg JPEG_QUALITY] input output
 ```
 
-```sh
+```text
 input               input file
 output              output file
 
@@ -47,7 +47,7 @@ mbtiles2osmand --jpg 75 input.mbtiles output.sqlitedb
 cut-osmand-map [-h] [-f] [-l UPPER_LEFT UPPER_LEFT] [-r BOTTOM_RIGHT BOTTOM_RIGHT] input output
 ```
 
-```sh
+```text
 Cut rectangular piece of map from sqlitedb file into separate map
 
 positional arguments:
@@ -77,7 +77,7 @@ cut-osmand-map map.sqlitedb map-fragment.sqlitedb
 merge-osmand [-h] [-f] input [input ...] output
 ```
 
-```sh
+```text
 Unite multiple osmand files into single
 
 positional arguments:
@@ -93,4 +93,30 @@ optional arguments:
 
 ```sh
 merge-osmand map1.sqlitedb map2.sqlitedb merged-map.sqlitedb
+```
+
+# download-nakarte-me-maps
+
+```sh
+download-nakarte-me-maps [-h] [-f] [--jpg JPEG_QUALITY] [-m MAPS [MAPS ...]] maps_dir
+```
+
+```text
+Download mbtiles files from https://tiles.nakarte.me/files
+
+positional arguments:
+  maps_dir              directory where maps will be downloaded
+
+options:
+  -h, --help            show this help message and exit
+  -f, --force           override output files if exists
+  --jpg JPEG_QUALITY    convert tiles to JPEG with specified quality
+  -m MAPS [MAPS ...], --maps MAPS [MAPS ...]
+                        list of map names to download
+```
+
+### Example
+
+```sh
+download-nakarte-me-maps mbtiles -m topo500 topo1000
 ```
