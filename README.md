@@ -66,7 +66,7 @@ options:
 ### Example
 
 ```sh
-cut-osmand-map map.sqlitedb map-fragment.sqlitedb
+cut-osmand-map map.sqlitedb map-fragment.sqlitedb --upper-left 44.00961 42.23831 --bottom-right 43.15811 43.01285
 ```
 
 ---
