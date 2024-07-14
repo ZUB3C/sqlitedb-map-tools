@@ -3,10 +3,11 @@ from pathlib import Path
 
 import click
 
+from .cli import cli
 from .utils import _remove_file
 
 
-@click.command(
+@cli.command(
     help="Merge multiple OsmAnd (.sqlitedb) files into a single file.\n\n"
     "If multiple files contain tile with the same coordinates, "
     "tile from first (from argument list) file will be used."

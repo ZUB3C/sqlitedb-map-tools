@@ -6,10 +6,11 @@ import click
 from PIL import Image
 from tqdm import tqdm
 
+from .cli import cli
 from .utils import _remove_file
 
 
-@click.command(help="Converts mbtiles format to sqlitedb format suitable for OsmAnd")
+@cli.command(help="Converts mbtiles format to sqlitedb format suitable for OsmAnd")
 @click.argument(
     "mbtiles_path",
     metavar="INPUT_FILE",

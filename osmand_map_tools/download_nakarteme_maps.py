@@ -4,6 +4,7 @@ import click
 import requests
 from tqdm import tqdm
 
+from .cli import cli
 from .const import MAP_NAMES, TILES_URL
 from .utils import _remove_file
 
@@ -30,7 +31,7 @@ def download_file(url: str, file_path: Path, force: bool) -> None:
             bar.update(size)
 
 
-@click.command(
+@cli.command(
     help="Download .mbtiles map files from https://tiles.nakarte.me/files.\n\n"
     "Pass 'all' as map name to download all available maps."
 )

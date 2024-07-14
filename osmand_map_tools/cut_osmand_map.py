@@ -5,6 +5,7 @@ from pathlib import Path
 
 import click
 
+from .cli import cli
 from .utils import _remove_file
 
 
@@ -27,7 +28,7 @@ def coordinates_to_tile_position(
     return x_tile, y_tile
 
 
-@click.command(help="Cut rectangular piece of map from sqlitedb file into separate map")
+@cli.command(help="Cut rectangular piece of map from sqlitedb file into separate map")
 @click.argument(
     "input_file",
     type=click.Path(exists=True, dir_okay=False, path_type=Path),
