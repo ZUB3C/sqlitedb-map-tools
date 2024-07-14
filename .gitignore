@@ -24,3 +24,7 @@ dist/
 site/
 *.egg-info/
 *.egg
+
+# Tests
+*.bmtiles
+*.sqlitedb
