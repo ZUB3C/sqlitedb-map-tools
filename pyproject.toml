@@ -4,11 +4,36 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "sqlitedb-map-tools"
-authors = ["ZUB3C <pitzubarev@yandex.ru>", "Zubarev Grigoriy <thirtysix@thirtysix.pw>"]
-description = "Script to download maps from nakarte.me and convert them to sqlitedb format suitable for OsmAnd"
 version = "0.2.0"
+description = "A set of CLI tools for working with .mbtiles map files, including a map downloader."
+authors = ["ZUB3C <pitzubarev@yandex.ru>", "Zubarev Grigoriy <thirtysix@thirtysix.pw>"]
 readme = "README.md"
-license = "GPLv3+"
+license = "GPL-3.0-or-later"
+keywords = [
+    "mbtiles",
+    "sqlitedb",
+    "osmand",
+    "locus",
+    "GIS",
+    "cli",
+]
+classifiers = [
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
