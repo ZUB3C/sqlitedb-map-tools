@@ -62,7 +62,7 @@ def coordinates_to_tile_position(
     default=False,
     help="Override output file if it exists",
 )
-def cut_piece_of_map(
+def cut_sqlitedb_map(
     input_file: Path,
     output_file: Path,
     upper_left_coordinates: tuple[float, float],
@@ -127,4 +127,4 @@ def cut_piece_of_map(
 
 
 if __name__ == "__main__":
-    cut_piece_of_map()
+    cut_sqlitedb_map()

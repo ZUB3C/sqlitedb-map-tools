@@ -22,7 +22,9 @@ from .utils import _remove_file
 @click.option(
     "-f", "--force", is_flag=True, default=False, help="Override output file if it exist"
 )
-def merge_osmand_maps(input_map_paths: list[Path], output_file: Path, force: bool = False) -> None:
+def merge_sqlitedb_maps(
+    input_map_paths: list[Path], output_file: Path, force: bool = False
+) -> None:
     _remove_file(output_file, "Output file %s already exists. Add -f option for overwrite", force)
 
     destination = sqlite3.connect(output_file)
@@ -55,4 +57,4 @@ def merge_osmand_maps(input_map_paths: list[Path], output_file: Path, force: boo
 
 
 if __name__ == "__main__":
-    merge_osmand_maps()
+    merge_sqlitedb_maps()

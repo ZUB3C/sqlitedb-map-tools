@@ -26,5 +26,5 @@ site/
 *.egg
 
 # Tests
-*.bmtiles
+*.mbtiles
 *.sqlitedb

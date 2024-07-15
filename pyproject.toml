@@ -3,10 +3,10 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "osmand-map-tools"
+name = "sqlitedb-map-tools"
 authors = ["ZUB3C <pitzubarev@yandex.ru>", "Zubarev Grigoriy <thirtysix@thirtysix.pw>"]
 description = "Script to download maps from nakarte.me and convert them to sqlitedb format suitable for OsmAnd"
-version = "0.1.0"
+version = "0.2.0"
 readme = "README.md"
 license = "GPLv3+"
 
@@ -25,10 +25,10 @@ types-tqdm = "^4.66.0.20240417"
 types-requests = "^2.32.0.20240712"
 
 [tool.poetry.scripts]
-mbtiles2osmand = "osmand_map_tools.mbtiles2osmand:convert_mbtiles_to_sqlitedb"
-cut-osmand-map = "osmand_map_tools.cut_osmand_map:cut_piece_of_map"
-merge-osmand = "osmand_map_tools.merge_osmand:merge_osmand_maps"
-download-nakarteme-maps = "osmand_map_tools.download_nakarteme_maps:download_nakarteme_maps"
+mbtiles2sqlitedb = "sqlitedb_map_tools:convert_mbtiles_to_sqlitedb"
+sqlitedb-cut = "sqlitedb_map_tools:cut_sqlitedb_map"
+sqlitedb-merge = "sqlitedb_map_tools:merge_sqlitedb_maps"
+nakarteme-dl = "sqlitedb_map_tools:download_nakarteme_maps"
 
 [tool.ruff]
 target-version = "py310"
