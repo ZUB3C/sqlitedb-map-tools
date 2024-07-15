@@ -1,5 +1,11 @@
 # 🗺 SQLiteDB Map Tools
 
+[![License](https://img.shields.io/github/license/ZUB3C/sqlitedb-map-tools?style=flat-square)](https://github.com/ZUB3C/sqlitedb-map-tools/blob/master/LICENSE)
+![Python Versions](https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12-blue?style=flat-square)
+![Status](https://img.shields.io/badge/status-stable-bright_green?style=flat-square)
+[![MyPy](https://img.shields.io/badge/mypy-checked-blue?style=flat-square)](https://github.com/python/mypy)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json&style=flat-square)](https://github.com/astral-sh/ruff)
+
 A set of CLI tools for working with .mbtiles map files, including a map downloader.
 
 - `mbtiles2sqlitedb`: Converts .mbtiles format to .sqlitedb format, compatible with [OsmAnd](https://osmand.net/) and [Locus](https://www.locusmap.app/).
@@ -24,6 +30,8 @@ pipx install git+https://github.com/ZUB3C/sqlitedb-map-tools.git
 ```sh
 pip install git+https://github.com/ZUB3C/sqlitedb-map-tools.git
 ```
+
+---
 
 ## 🌿 Convert .mbtiles to .sqlitedb
 
@@ -53,8 +61,6 @@ Convert tiles to JPEG with compression level set to 80:
 mbtiles2sqlitedb -j 80 input.mbtiles output.sqlitedb
 ```
 
----
-
 ## ✂️ Cut .sqlitedb map
 
 ```sh
@@ -80,8 +86,6 @@ bottom-right corners:
 ```sh
 sqlitedb-cut map.sqlitedb map-fragment.sqlitedb --upper-left 44.00961 42.23831 --bottom-right 43.15811 43.01285
 ```
-
----
 
 ## 🧩 Merge .sqlitedb maps
 
