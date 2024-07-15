@@ -12,7 +12,9 @@ from .utils import _remove_file
 
 def download_file(url: str, file_path: Path, force: bool) -> None:
     file_path.parent.mkdir(parents=True, exist_ok=True)
-    _remove_file(file_path, "File %s already exists, skipping download", force)
+    _remove_file(
+        file_path, "File %s already exists, skipping download. Use `-f` to redownload.", force
+    )
 
     response = requests.get(url, stream=True, timeout=60)
     total_file_size = int(response.headers.get("content-length", 0))
@@ -33,8 +35,8 @@ def download_file(url: str, file_path: Path, force: bool) -> None:
 
 
 @cli.command(
-    help="Download .mbtiles map files from https://tiles.nakarte.me/files.\n\n"
-    "Pass 'all' as map name to download all available maps."
+    help="Downloads .mbtiles map files from <https://tiles.nakarte.me/files>.\n\n"
+    "Use `all` as the map name to download all available maps."
 )
 @click.argument("maps", nargs=-1)
 @click.option(
@@ -43,10 +45,14 @@ def download_file(url: str, file_path: Path, force: bool) -> None:
     "output_dir",
     default=".",
     type=click.Path(exists=True, file_okay=False, path_type=Path),
-    help="Directory where maps will be downloaded",
+    help="Directory where maps will be downloaded.",
 )
 @click.option(
-    "-f", "--force", is_flag=True, default=False, help="Override output file if it exist"
+    "-f",
+    "--force",
+    is_flag=True,
+    default=False,
+    help="Override the output file if it exists.",
 )
 def download_nakarteme_maps(
     maps: list[str], output_dir: Path = Path(), force: bool = False

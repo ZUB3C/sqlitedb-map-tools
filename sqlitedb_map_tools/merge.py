@@ -8,9 +8,9 @@ from .utils import _remove_file
 
 
 @cli.command(
-    help="Merge multiple OsmAnd (.sqlitedb) files into a single file.\n\n"
-    "If multiple files contain tile with the same coordinates, "
-    "tile from first (from argument list) file will be used."
+    help="Merges multiple .sqlitedb map files into a single file.\n\n"
+    "If multiple files contain tiles with the same coordinates, "
+    "the tile from the first file in the argument list will be used."
 )
 @click.argument(
     "input_map_paths",
@@ -20,7 +20,11 @@ from .utils import _remove_file
 )
 @click.argument("output_file", type=click.Path(dir_okay=False, path_type=Path))
 @click.option(
-    "-f", "--force", is_flag=True, default=False, help="Override output file if it exist"
+    "-f",
+    "--force",
+    is_flag=True,
+    default=False,
+    help="Override the output file if it exists.",
 )
 def merge_sqlitedb_maps(
     input_map_paths: list[Path], output_file: Path, force: bool = False

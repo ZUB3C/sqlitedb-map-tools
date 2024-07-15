@@ -1,27 +1,42 @@
-# SQLiteDB Map Tools
+# 🗺 SQLiteDB Map Tools
 
-Converts mbtiles format to sqlitedb format suitable for OsmAnd and RMaps.
-Also possible convert tiles to jpeg to reduce the file size (`--jpeg-quality` option).
+A set of CLI tools for working with .mbtiles map files, including a map downloader.
 
-## Installing
+- `mbtiles2sqlitedb`: Converts .mbtiles format to .sqlitedb format, compatible with [OsmAnd](https://osmand.net/) and [Locus](https://www.locusmap.app/).
+- `sqlitedb-cut`: Extracts a rectangular section of a map from a .sqlitedb file into a separate map file.
+- `sqlitedb-merge`: Merges multiple .sqlitedb map files into a single file.
+- `nakarteme-dl`: Downloads .mbtiles map files from [nakarte.me](https://tiles.nakarte.me/files).
 
-**Python 3.10 or above is required**
+Additionally, you can compress tiles using JPEG to reduce file size (see examples).
+
+## 📦 Installing
+
+**Python 3.10 or above is required.**
+
+### Using [`pipx`](https://github.com/pypa/pipx) (recommended)
 
 ```sh
-pipx install git+https://github.com/ZUB3C/osmand-map-tools.git
+pipx install git+https://github.com/ZUB3C/sqlitedb-map-tools.git
 ```
 
-## Convert mbtiles to sqlitedb
+### Using `pip`
+
+```sh
+pip install git+https://github.com/ZUB3C/sqlitedb-map-tools.git
+```
+
+## 🌿 Convert .mbtiles to .sqlitedb
+
+```sh
+mbtiles2sqlitedb [OPTIONS] INPUT_FILE OUTPUT_FILE
+```
+
+Converts .mbtiles format to .sqlitedb format suitable for OsmAnd and Locus.
 
 ```text
-Usage: mbtiles2sqlitedb [OPTIONS] INPUT_FILE OUTPUT_FILE
-
-  Converts mbtiles format to sqlitedb format suitable for OsmAnd
-
-Options:
-  -f, --force                 Override output file if it exists
-  -j, --jpeg-quality INTEGER  Convert tiles to JPEG with specified quality
-  --help                      Show this message and exit.
+-f, --force                 Override the output file if it exists.
+-j, --jpeg-quality INTEGER  Convert tiles to JPEG with the specified
+                            quality.
 ```
 
 ### Examples
@@ -32,33 +47,35 @@ Simple:
 mbtiles2sqlitedb input.mbtiles output.sqlitedb
 ```
 
-Converting tiles to jpeg with compression:
+Convert tiles to JPEG with compression level set to 80:
 
 ```sh
-mbtiles2sqlitedb -j 75 input.mbtiles output.sqlitedb
+mbtiles2sqlitedb -j 80 input.mbtiles output.sqlitedb
 ```
 
 ---
 
-## Cut sqlitedb map
+## ✂️ Cut .sqlitedb map
+
+```sh
+sqlitedb-cut [OPTIONS] INPUT_FILE OUTPUT_FILE
+```
+
+Extracts a rectangular section of a map from a .sqlitedb file into a separate map.
 
 ```text
-Usage: sqlitedb-cut [OPTIONS] INPUT_FILE OUTPUT_FILE
-
-  Cut rectangular piece of map from sqlitedb file into separate map
-
-Options:
-  -l, --upper-left FLOAT...    Coordinates of the upper left corner of the
-                               piece of mapthat needs to be cut into a
-                               separate map.  [required]
-  -r, --bottom-right FLOAT...  Coordinates of the bottom right corner of the
-                               piece of mapthat needs to be cut into a
-                               separate map.  [required]
-  -f, --force                  Override output file if it exists
-  --help                       Show this message and exit.
+-l, --upper-left FLOAT...    Coordinates of the upper-left corner of the
+                             section to be extracted.  [required]
+-r, --bottom-right FLOAT...  Coordinates of the bottom-right corner of the
+                             section to be extracted.  [required]
+-f, --force                  Override the output file if it exists.
 ```
 
 ### Example
+
+This command extracts a rectangular section from `map.sqlitedb` and saves it as
+`map-fragment.sqlitedb`, using the specified coordinates for the upper-left and
+bottom-right corners:
 
 ```sh
 sqlitedb-cut map.sqlitedb map-fragment.sqlitedb --upper-left 44.00961 42.23831 --bottom-right 43.15811 43.01285
@@ -66,19 +83,20 @@ sqlitedb-cut map.sqlitedb map-fragment.sqlitedb --upper-left 44.00961 42.23831 -
 
 ---
 
-## Merge sqlitedb maps
+## 🧩 Merge .sqlitedb maps
+
+```sh
+sqlitedb-merge [OPTIONS] INPUT_FILES OUTPUT_FILE
+```
+
+Merges multiple .sqlitedb map files into a single file.
+
+If multiple files contain tiles with the same coordinates, the tile from the
+first file in the argument list will be used.
 
 ```text
-Usage: sqlitedb-merge [OPTIONS] INPUT_FILES OUTPUT_FILE
-
-  Merge multiple OsmAnd (.sqlitedb) files into a single file.
-
-  If multiple files contain tile with the same coordinates, tile from first
-  (from argument list) file will be used.
-
-Options:
-  -f, --force  Override output file if it exist
-  --help       Show this message and exit.
+-f, --force  Override the output file if it exists.
+--help       Show this message and exit.
 ```
 
 ### Example
@@ -87,21 +105,19 @@ Options:
 sqlitedb-merge map1.sqlitedb map2.sqlitedb merged-map.sqlitedb
 ```
 
-## Download `nakarte.me` maps
+## ⬇️ Download `nakarte.me` maps
 
-List of available maps can be found [here](https://tiles.nakarte.me/files).
+```sh
+nakarteme-dl [OPTIONS] MAPS...
+```
+
+Downloads .mbtiles map files from [tiles.nakarte.me](https://tiles.nakarte.me/files).
+
+Use `all` as the map name to download all available maps.
 
 ```text
-Usage: nakarteme-dl [OPTIONS] [MAPS]...
-
-  Download .mbtiles map files from https://tiles.nakarte.me/files.
-
-  Pass 'all' as map name to download all available maps.
-
-Options:
-  -o, --output DIRECTORY  Directory where maps will be downloaded
-  -f, --force             Override output file if it exist
-  --help                  Show this message and exit.
+-o, --output DIRECTORY  Directory where maps will be downloaded.
+-f, --force             Override the output file if it exists.
 ```
 
 ### Example
@@ -109,3 +125,8 @@ Options:
 ```sh
 nakarteme-dl -o mbtiles topo500 topo1000
 ```
+
+## 📜 License
+
+This project is licensed under the GPLv3+ license - see the
+[license file](https://github.com/ZUB3C/sqlitedb-map-tools/blob/master/LICENSE) for details.

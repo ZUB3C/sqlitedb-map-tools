@@ -11,7 +11,7 @@ from .cli import cli
 from .utils import _remove_file
 
 
-@cli.command(help="Converts mbtiles format to sqlitedb format suitable for OsmAnd")
+@cli.command(help="Converts .mbtiles format to .sqlitedb format suitable for OsmAnd and Locus.")
 @click.argument(
     "mbtiles_path",
     metavar="INPUT_FILE",
@@ -26,10 +26,10 @@ from .utils import _remove_file
     "replace_file",
     is_flag=True,
     default=False,
-    help="Override output file if it exists",
+    help="Override the output file if it exists.",
 )
 @click.option(
-    "-j", "--jpeg-quality", type=int, help="Convert tiles to JPEG with specified quality"
+    "-j", "--jpeg-quality", type=int, help="Convert tiles to JPEG with the specified quality."
 )
 def convert_mbtiles_to_sqlitedb(
     mbtiles_path: Path,

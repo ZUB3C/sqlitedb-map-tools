@@ -28,7 +28,9 @@ def coordinates_to_tile_position(
     return x_tile, y_tile
 
 
-@cli.command(help="Cut rectangular piece of map from sqlitedb file into separate map")
+@cli.command(
+    help="Extracts a rectangular section of a map from a .sqlitedb file into a separate map."
+)
 @click.argument(
     "input_file",
     type=click.Path(exists=True, dir_okay=False, path_type=Path),
@@ -41,8 +43,7 @@ def coordinates_to_tile_position(
     required=True,
     nargs=2,
     type=float,
-    help="Coordinates of the upper left corner of the piece of map"
-    "that needs to be cut into a separate map.",
+    help="Coordinates of the upper-left corner of the section to be extracted.",
 )
 @click.option(
     "-r",
@@ -51,35 +52,28 @@ def coordinates_to_tile_position(
     required=True,
     nargs=2,
     type=float,
-    help="Coordinates of the bottom right corner of the piece of map"
-    "that needs to be cut into a separate map.",
+    help="Coordinates of the bottom-right corner of the section to be extracted.",
 )
 @click.option(
     "-f",
     "--force",
-    "replace_file",
     is_flag=True,
     default=False,
-    help="Override output file if it exists",
+    help="Override the output file if it exists.",
 )
 def cut_sqlitedb_map(
     input_file: Path,
     output_file: Path,
     upper_left_coordinates: tuple[float, float],
     bottom_right_coordinates: tuple[float, float],
-    replace_file: bool,
+    force: bool,
 ) -> None:
-    print(
-        f"{input_file=}\n{output_file=}\n{upper_left_coordinates=}\n{bottom_right_coordinates=}\n{replace_file=}"
-    )
     latitude1, longitude1 = upper_left_coordinates
     latitude2, longitude2 = bottom_right_coordinates
     if not (latitude1 > latitude2 and longitude1 < longitude2):
         print("Enter the coordinates of the upper left and bottom right corners correctly")
         exit(1)
-    _remove_file(
-        output_file, "Output file %s already exists. Add -f option for overwrite", replace_file
-    )
+    _remove_file(output_file, "Output file %s already exists. Add -f option for overwrite", force)
 
     source = sqlite3.connect(input_file)
     destination = sqlite3.connect(output_file)
