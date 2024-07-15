@@ -1,5 +1,6 @@
 import io
 import sqlite3
+import warnings
 from pathlib import Path
 
 import click
@@ -78,7 +79,9 @@ def convert_mbtiles_to_sqlitedb(
 
 def to_jpg(raw_bytes: bytes, quality: int) -> bytes:
     image_file = Image.open(io.BytesIO(raw_bytes))
-    image = image_file.convert("RGB")
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=UserWarning)
+        image = image_file.convert("RGB")
     stream = io.BytesIO()
     image.save(stream, format="JPEG", subsampling=0, quality=quality)
     return stream.getvalue()
