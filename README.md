@@ -87,7 +87,9 @@ Options:
 sqlitedb-merge map1.sqlitedb map2.sqlitedb merged-map.sqlitedb
 ```
 
-## Download [nakarte.me](https://nakarte.me) maps
+## Download `nakarte.me` maps
+
+List of available maps can be found [here](https://tiles.nakarte.me/files).
 
 ```text
 Usage: nakarteme-dl [OPTIONS] [MAPS]...
@@ -107,22 +109,3 @@ Options:
 ```sh
 nakarteme-dl -o mbtiles topo500 topo1000
 ```
-
-Available maps:
-- ArbaletMO
-- adraces
-- eurasia25km
-- ggc250
-- ggc500
-- ggc1000
-- ggc2000
-- montenegro250m
-- new_gsh_050k
-- new_gsh_100k
-- osport
-- purikov
-- topo001m
-- topo250
-- topo500
-- topo1000
-- wikimedia_commons_images

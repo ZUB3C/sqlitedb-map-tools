@@ -5,7 +5,8 @@ import requests
 from tqdm import tqdm
 
 from .cli import cli
-from .const import MAP_NAMES, TILES_URL
+from .const import TILES_URL
+from .parser import get_available_map_names
 from .utils import _remove_file
 
 
@@ -50,16 +51,17 @@ def download_file(url: str, file_path: Path, force: bool) -> None:
 def download_nakarteme_maps(
     maps: list[str], output_dir: Path = Path(), force: bool = False
 ) -> None:
-    available_maps_str = "".join(("Available maps:\n    ", "\n    ".join(MAP_NAMES)))
+    map_names = get_available_map_names()
+    available_maps_str = "".join(("Available maps:\n    ", "\n    ".join(map_names)))
     map_names_to_download = maps
     if not map_names_to_download:
         print(f"Specify maps which you want to download as arguments.\n{available_maps_str}")
         exit(1)
     if map_names_to_download == ["all"]:
         print("Downloading all available maps.")
-        map_names_to_download = MAP_NAMES
+        map_names_to_download = map_names
     else:
-        invalid_map_names = [i for i in map_names_to_download if i not in MAP_NAMES]
+        invalid_map_names = [i for i in map_names_to_download if i not in map_names]
         if invalid_map_names:
             print(f"Invalid map names: {', '.join(invalid_map_names)}.\n{available_maps_str}")
             exit(1)
