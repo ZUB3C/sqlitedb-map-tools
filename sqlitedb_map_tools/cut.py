@@ -1,4 +1,3 @@
-import math
 import sqlite3
 import time
 from pathlib import Path
@@ -6,26 +5,7 @@ from pathlib import Path
 import click
 
 from .cli import cli
-from .utils import _remove_file
-
-
-def tile_position_to_coordinates(x_tile: int, y_tile: int, zoom: int) -> tuple[float, float]:
-    n = 1 << zoom  # 2 ** zoom
-    longitude_degrees = x_tile / n * 360.0 - 180.0
-    print(f"{longitude_degrees=}")
-    latitude_radians = math.atan(math.sinh(math.pi * (1 - 2 * y_tile / n)))
-    latitude_degrees = math.degrees(latitude_radians)
-    return latitude_degrees, longitude_degrees
-
-
-def coordinates_to_tile_position(
-    latitude_radians: float, longitude_degrees: float, zoom: int
-) -> tuple[float, float]:
-    latitude_radians = math.radians(latitude_radians)
-    n = 1 << zoom  # 2 ** zoom
-    x_tile = int((longitude_degrees + 180.0) / 360.0 * n)
-    y_tile = int((1.0 - math.asinh(math.tan(latitude_radians)) / math.pi) / 2.0 * n)
-    return x_tile, y_tile
+from .utils import _remove_file, coordinates_to_tile_position
 
 
 @cli.command(
@@ -66,14 +46,16 @@ def cut_sqlitedb_map(
     output_file: Path,
     upper_left_coordinates: tuple[float, float],
     bottom_right_coordinates: tuple[float, float],
-    force: bool,
+    replace_file: bool,
 ) -> None:
     latitude1, longitude1 = upper_left_coordinates
     latitude2, longitude2 = bottom_right_coordinates
     if not (latitude1 > latitude2 and longitude1 < longitude2):
         print("Enter the coordinates of the upper left and bottom right corners correctly")
         exit(1)
-    _remove_file(output_file, "Output file %s already exists. Add -f option for overwrite", force)
+    _remove_file(
+        output_file, "Output file %s already exists. Add -f option for overwrite", replace_file
+    )
 
     source = sqlite3.connect(input_file)
     destination = sqlite3.connect(output_file)
@@ -90,10 +72,8 @@ def cut_sqlitedb_map(
     total_tiles_count = 0
     start_time = time.perf_counter()
     for zoom in range(min_zoom, max_zoom + 1):
-        min_x_tile, max_y_tile = coordinates_to_tile_position(latitude1, longitude1, zoom)
-        max_x_tile, min_y_tile = coordinates_to_tile_position(latitude2, longitude2, zoom)
-        min_x_tile, max_x_tile = sorted((min_x_tile, max_x_tile))
-        min_y_tile, max_y_tile = sorted((min_y_tile, max_y_tile))
+        min_x_tile, min_y_tile = coordinates_to_tile_position(latitude1, longitude1, zoom)
+        max_x_tile, max_y_tile = coordinates_to_tile_position(latitude2, longitude2, zoom)
 
         input_data = source_cursor.execute(
             "SELECT x, y, z, image "

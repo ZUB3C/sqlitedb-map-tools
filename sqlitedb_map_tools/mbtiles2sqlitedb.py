@@ -1,6 +1,5 @@
 import io
 import sqlite3
-import warnings
 from pathlib import Path
 
 import click
@@ -8,7 +7,7 @@ from PIL import Image
 from tqdm import tqdm
 
 from .cli import cli
-from .utils import _remove_file
+from .utils import _remove_file, to_jpg
 
 
 @cli.command(help="Converts .mbtiles format to .sqlitedb format suitable for OsmAnd and Locus.")
@@ -57,15 +56,16 @@ def convert_mbtiles_to_sqlitedb(
     )
 
     for row in tqdm(iterable=input_data, desc=mbtiles_path.stem):
-        image = row[3]
+        image_bytes = row[3]
         if jpeg_quality is not None:
-            image = to_jpg(image, int(jpeg_quality))
-        zoom, x_tile, y_tile = map(int, row[:3])
+            image = Image.open(io.BytesIO(image_bytes))
+            image_bytes = to_jpg(image, quality=jpeg_quality)
+        zoom, x_tile, y_tile = row[:3]
         y = (1 << zoom) - 1 - y_tile  # 2 ** zoom - 1 - y_tile
         z = 17 - zoom
         destination_cursor.execute(
             "INSERT INTO tiles (x, y, z, s, image) VALUES (?, ?, ?, ?, ?)",
-            (x_tile, y, z, 0, sqlite3.Binary(image)),
+            (x_tile, y, z, 0, sqlite3.Binary(image_bytes)),
         )
 
     destination_cursor.execute(
@@ -75,16 +75,6 @@ def convert_mbtiles_to_sqlitedb(
     destination.commit()
     source.close()
     destination.close()
-
-
-def to_jpg(raw_bytes: bytes, quality: int) -> bytes:
-    image_file = Image.open(io.BytesIO(raw_bytes))
-    with warnings.catch_warnings():
-        warnings.filterwarnings("ignore", category=UserWarning)
-        image = image_file.convert("RGB")
-    stream = io.BytesIO()
-    image.save(stream, format="JPEG", subsampling=0, quality=quality)
-    return stream.getvalue()
 
 
 if __name__ == "__main__":

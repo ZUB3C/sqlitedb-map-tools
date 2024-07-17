@@ -42,6 +42,7 @@ tqdm = "^4.66.4"
 requests = "^2.32.3"
 click = "^8.1.7"
 click-help-colors = "^0.9.4"
+aiohttp = "^3.9.5"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.5.2"
@@ -54,6 +55,7 @@ mbtiles2sqlitedb = "sqlitedb_map_tools:convert_mbtiles_to_sqlitedb"
 sqlitedb-cut = "sqlitedb_map_tools:cut_sqlitedb_map"
 sqlitedb-merge = "sqlitedb_map_tools:merge_sqlitedb_maps"
 nakarteme-dl = "sqlitedb_map_tools:download_nakarteme_maps"
+raster-map-dl = "sqlitedb_map_tools:download_raster_map"
 
 [tool.ruff]
 target-version = "py310"
