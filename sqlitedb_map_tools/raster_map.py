@@ -5,7 +5,6 @@ import io
 import logging
 import sqlite3
 import time
-import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final
 
@@ -42,7 +41,9 @@ class RasterMapAPI:
         self.chunk_size = chunk_size
         self._session = aiohttp.ClientSession(
             timeout=aiohttp.ClientTimeout(timeout),
-            connector=aiohttp.TCPConnector(limit=max_requests_per_second),
+            connector=aiohttp.TCPConnector(limit=max_requests_per_second)
+            if max_requests_per_second is not None
+            else None,
             headers=DEFAULT_HEADERS,
         )
         self._create_sqlitedb_file(sqlitedb_path=sqlitedb_path)
@@ -334,7 +335,7 @@ def download_raster_map(
     timeout: int,
     max_retry_count: int,
     chunk_size: int,
-):
+) -> None:
     asyncio.run(
         _download_raster_map(
             output_file=output_file,

@@ -5,7 +5,6 @@ from collections.abc import AsyncIterable, AsyncIterator
 from pathlib import Path
 from typing import TypeVar
 
-from PIL import Image
 from PIL.Image import Image as ImageType
 
 

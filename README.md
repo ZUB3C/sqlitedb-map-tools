@@ -100,7 +100,6 @@ first file in the argument list will be used.
 
 ```text
 -f, --force  Override the output file if it exists.
---help       Show this message and exit.
 ```
 
 ### Example
