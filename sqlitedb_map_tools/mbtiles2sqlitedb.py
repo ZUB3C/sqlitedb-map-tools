@@ -17,7 +17,10 @@ from .utils import _remove_file, to_jpg
     type=click.Path(exists=True, dir_okay=False, path_type=Path),
 )
 @click.argument(
-    "sqlitedb_path", metavar="OUTPUT_FILE", type=click.Path(dir_okay=False, path_type=Path)
+    "sqlitedb_path",
+    metavar="OUTPUT_FILE",
+    type=click.Path(dir_okay=False, path_type=Path),
+    required=False,
 )
 @click.option(
     "-f",
@@ -32,10 +35,12 @@ from .utils import _remove_file, to_jpg
 )
 def convert_mbtiles_to_sqlitedb(
     mbtiles_path: Path,
-    sqlitedb_path: Path,
+    sqlitedb_path: Path | None,
     replace_file: bool = False,
     jpeg_quality: int | None = None,
 ) -> None:
+    if sqlitedb_path is None:
+        sqlitedb_path = Path(f"{mbtiles_path.stem}.sqlitedb")
     _remove_file(
         sqlitedb_path, "Output file %s already exists. Add -f option for overwrite", replace_file
     )
