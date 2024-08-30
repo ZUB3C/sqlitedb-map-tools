@@ -1,14 +1,18 @@
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.poetry]
+[project]
 name = "sqlitedb-map-tools"
 version = "0.2.0"
 description = "A set of CLI tools for working with .mbtiles map files, including a map downloader."
-authors = ["ZUB3C <pitzubarev@yandex.ru>", "Zubarev Grigoriy <thirtysix@thirtysix.pw>"]
-readme = "README.md"
 license = "GPL-3.0-or-later"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "ZUB3C", email = "pitzubarev@yandex.ru" },
+    { name = "Zubarev Grigoriy", email = "thirtysix@thirtysix.pw" },
+]
 keywords = [
     "mbtiles",
     "sqlitedb",
@@ -34,28 +38,36 @@ classifiers = [
     "Topic :: Utilities",
     "Typing :: Typed",
 ]
+dependencies = [
+    "pillow>=10.4.0",
+    "tqdm>=4.66.5",
+    "requests>=2.32.3",
+    "click>=8.1.7",
+    "click-help-colors>=0.9.4",
+    "aiohttp>=3.10.5",
+]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-pillow = "^10.4.0"
-tqdm = "^4.66.4"
-requests = "^2.32.3"
-click = "^8.1.7"
-click-help-colors = "^0.9.4"
-aiohttp = "^3.9.5"
-
-[tool.poetry.group.dev.dependencies]
-ruff = "^0.5.2"
-mypy = "^1.10.1"
-types-tqdm = "^4.66.0.20240417"
-types-requests = "^2.32.0.20240712"
-
-[tool.poetry.scripts]
+[project.scripts]
 mbtiles2sqlitedb = "sqlitedb_map_tools:convert_mbtiles_to_sqlitedb"
 sqlitedb-cut = "sqlitedb_map_tools:cut_sqlitedb_map"
 sqlitedb-merge = "sqlitedb_map_tools:merge_sqlitedb_maps"
 nakarteme-dl = "sqlitedb_map_tools:download_nakarteme_maps"
 raster-map-dl = "sqlitedb_map_tools:download_raster_map"
+
+[tool.rye]
+managed = true
+universal = true
+dev-dependencies = [
+    "mypy>=1.11.2",
+    "types-tqdm>=4.66.0.20240417",
+    "types-requests>=2.32.0.20240712",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["sqlitedb_map_tools"]
 
 [tool.ruff]
 target-version = "py310"
