@@ -20,6 +20,7 @@ async-timeout==4.0.3 ; python_version < '3.11'
     # via aiohttp
 attrs==24.2.0
     # via aiohttp
+basedpyright==1.17.1
 certifi==2024.8.30
     # via requests
 charset-normalizer==3.3.2
@@ -41,21 +42,16 @@ idna==3.8
 multidict==6.0.5
     # via aiohttp
     # via yarl
-mypy==1.11.2
-mypy-extensions==1.0.0
-    # via mypy
+nodejs-wheel-binaries==20.17.0
+    # via basedpyright
 pillow==10.4.0
     # via sqlitedb-map-tools
 requests==2.32.3
     # via sqlitedb-map-tools
-tomli==2.0.1 ; python_version < '3.11'
-    # via mypy
 tqdm==4.66.5
     # via sqlitedb-map-tools
 types-requests==2.32.0.20240712
 types-tqdm==4.66.0.20240417
-typing-extensions==4.12.2
-    # via mypy
 urllib3==2.2.2
     # via requests
     # via types-requests

@@ -58,7 +58,7 @@ raster-map-dl = "sqlitedb_map_tools:download_raster_map"
 managed = true
 universal = true
 dev-dependencies = [
-    "mypy>=1.11.2",
+    "basedpyright>=1.17.1",
     "types-tqdm>=4.66.0.20240417",
     "types-requests>=2.32.0.20240712",
 ]
@@ -114,8 +114,7 @@ ignore = [
     "RUF001", # String contains ambiguous `В` (CYRILLIC CAPITAL LETTER VE)
 ]
 
-[tool.mypy]
-strict = true
+[tool.basedpyright]
 exclude = [
     ".git",
     ".venv",
@@ -126,3 +125,8 @@ exclude = [
     "dist",
     "scripts",
 ]
+typeCheckingMode = "standard"
+pythonPlatform = "All"
+pythonVersion = "3.12"
+reportMissingImports = true
+reportMissingTypeStubs = true

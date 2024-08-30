@@ -88,14 +88,12 @@ class RasterMapAPI:
                 fetch_tiles_tasks.append(asyncio.create_task(self._get_image(url=tile_url)))
 
                 if len(fetch_tiles_tasks) >= self.chunk_size:
-                    tiles: list[ImageType | None] = await asyncio.gather(*fetch_tiles_tasks)
+                    tiles: list[ImageType | None] = await asyncio.gather(*fetch_tiles_tasks)  # pyright: ignore [reportRedeclaration]
                     yield tiles
                     fetch_tiles_tasks.clear()
 
         if fetch_tiles_tasks:
-            tiles: list[ImageType | None] = await asyncio.gather(  # type: ignore[no-redef]
-                *fetch_tiles_tasks
-            )
+            tiles: list[ImageType | None] = await asyncio.gather(*fetch_tiles_tasks)
             yield tiles
 
     def _save_tile(self, x: int, y: int, z: int, image: ImageType) -> None:
@@ -139,8 +137,8 @@ class RasterMapAPI:
             logger.debug(
                 "Retring GET request (%d try): %d: %s",
                 retry_number + 1,
-                response.status,
-                str(response.url),
+                response.status,  # pyright: ignore [reportPossiblyUnboundVariable]
+                str(response.url),  # pyright: ignore [reportPossiblyUnboundVariable]
             )
             return await self._get_image(url=url, retry_number=retry_number + 1, **kwargs)
 

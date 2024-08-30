@@ -170,6 +170,19 @@ Download tiles from remote server to .sqlitedb file.
 raster-map-dl opentopomap-elbrus-region.sqlitedb -u "https://c.tile.opentopomap.org/{z}/{x}/{y}.png" --min-zoom 10 --max-zoom 16 --upper-left 44.00961 42.23831 --bottom-right 43.15811 43.01285
 ```
 
+## 🔧 Development
+
+Install Rye by following
+the [installation guide](https://rye.astral.sh/guide/installation/).
+
+Use `rye sync` to install dependencies and required Python version.
+
+Use `rye check --fix` and `rye fmt` to lint and format code. Assumed to be run before each commit
+to guarantee code quality.
+
+Use `rye run basedpyright` to ensure typing is correct.
+
+
 ## 📜 License
 
 This project is licensed under the GPLv3+ license - see the
